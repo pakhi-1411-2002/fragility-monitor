@@ -1,5 +1,7 @@
 """Load and validate the reference tables: the ETF universe and ETF holdings."""
 
+import re
+
 import pandas as pd
 
 from fragility.config import (
@@ -95,3 +97,41 @@ def missing_tickers(holdings: pd.DataFrame) -> pd.DataFrame:
             .agg(etfs=("etf_ticker", lambda s: ", ".join(sorted(s))),
                  max_weight=("weight", "max"))
             .sort_values("max_weight", ascending=False))
+
+
+US_SYMBOL = re.compile(r"^[A-Z]{1,5}(-[A-Z])?$")         # AAPL, BRK-B
+UK_SYMBOL = re.compile(r"^[A-Z0-9]{2,5}(-[A-Z])?$")      # HSBA, BT-A
+
+
+def yahoo_symbol(ticker: str, country: str) -> str:
+    """Turn an issuer's ticker into the symbol Yahoo uses, or '' if we can't.
+
+    Issuers write tickers their own way: 'BRK/B' or 'BRK.B' for Berkshire,
+    'RR.' for Rolls-Royce. Yahoo wants 'BRK-B' and 'RR.L'. Only US and UK
+    companies are handled: those are the shares a UK investor most often
+    holds directly. Other markets use local codes (e.g. 2330 for TSMC) that
+    would need an exchange suffix we can't reliably infer.
+    """
+    t = str(ticker).strip().upper().rstrip(".").replace("/", "-").replace(".", "-")
+    if country == "United States" and US_SYMBOL.match(t):
+        return t
+    if country == "United Kingdom" and UK_SYMBOL.match(t):
+        return f"{t}.L"
+    return ""
+
+
+def share_symbols(holdings: pd.DataFrame) -> pd.DataFrame:
+    """Companies inside the funds that someone could also own directly, with Yahoo symbols.
+
+    Residual rows and bond/gold single-block rows are skipped. Returns one row
+    per company: holding_id, holding_name, holding_ticker, country, yahoo_symbol
+    (blank when the company's market isn't supported).
+    """
+    companies = holdings[(holdings["holding_id"] != RESIDUAL_ID)
+                         & (holdings["holding_id"] != holdings["etf_ticker"])]
+    companies = companies.drop_duplicates("holding_id")[
+        ["holding_id", "holding_name", "holding_ticker", "country"]].copy()
+    companies["yahoo_symbol"] = [yahoo_symbol(t, c) for t, c in
+                                 zip(companies["holding_ticker"], companies["country"],
+                                     strict=True)]
+    return companies.reset_index(drop=True)
