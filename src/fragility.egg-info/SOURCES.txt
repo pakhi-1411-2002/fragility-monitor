@@ -1,0 +1,17 @@
+pyproject.toml
+src/fragility/__init__.py
+src/fragility/alerts.py
+src/fragility/concentration.py
+src/fragility/config.py
+src/fragility/correlation.py
+src/fragility/lookthrough.py
+src/fragility/pipeline.py
+src/fragility/portfolio.py
+src/fragility/prices.py
+src/fragility/score.py
+src/fragility/stress.py
+src/fragility/universe.py
+src/fragility.egg-info/PKG-INFO
+src/fragility.egg-info/SOURCES.txt
+src/fragility.egg-info/dependency_links.txt
+src/fragility.egg-info/top_level.txt

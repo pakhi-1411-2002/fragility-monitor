@@ -1,0 +1,12 @@
+# Data and models: too big for GitHub, rebuilt by run_pipeline.py
+data/
+models/
+
+# Jupyter auto-saves
+.ipynb_checkpoints/
+
+# Python compiled files
+__pycache__/
+
+# Power BI backup files
+*.pbix.bak
