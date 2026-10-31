@@ -25,6 +25,7 @@ ETF_HOLDINGS_CSV = REFERENCE_DIR / "etf_holdings.csv"
 SCENARIOS_CSV = REFERENCE_DIR / "scenarios.csv"
 NAME_MAP_CSV = REFERENCE_DIR / "name_map.csv"
 PRICE_CACHE = CACHE_DIR / "prices.parquet"
+HOLDINGS_SOURCES_CSV = REFERENCE_DIR / "holdings_sources.csv"
 
 # ---------------------------------------------------------------------------
 # Prices (Section 5.3)
