@@ -34,7 +34,7 @@ CANDIDATES = [
     ("EIMI.L", "iShares Core MSCI EM IMI", "iShares", "equity", "Emerging", ""),
     ("VFEM.L", "Vanguard FTSE Emerging Markets", "Vanguard", "equity", "Emerging", ""),
     ("IGLT.L", "iShares Core UK Gilts", "iShares", "bond", "UK", ""),
-    ("VAGP.L", "Vanguard Global Aggregate Bond GBP Hedged", "Vanguard", "bond", "Global", ""),
+    ("VAGP.L", "Vanguard Global Aggregate Bond GBP Hedged", "Vanguard", "bond", "Global", "IGLT.L"),
     ("SGLN.L", "iShares Physical Gold", "iShares", "commodity", "Global", ""),
 ]
 
