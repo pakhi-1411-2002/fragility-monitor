@@ -1,15 +1,35 @@
-# Data and models: too big for GitHub, rebuilt by run_pipeline.py
-data/
-models/
-
-# Jupyter auto-saves
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
 .ipynb_checkpoints/
 
-# Python compiled files
-__pycache__/
+# --- Local Python environment (only the folder at the top of the project) ---
+/fragility/
+/.venv/
+/venv/
 
-# Power BI backup files
-*.pbix.bak
+# --- Editors and Windows ---
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
 
+# --- Secrets ---
+.streamlit/secrets.toml
+.env
+
+# --- Data ---
+# Raw downloads from the fund providers stay on this PC.
+data/raw/
+# Price caches are rebuilt by scripts/refresh_prices.py...
+data/cache/*
+# ...except the starter cache the deployed app needs.
 !data/cache/prices.parquet
+!data/cache/.gitkeep
+# Scratch file rewritten every time suggest_name_map.py runs.
 data/reference/name_map_suggestions.csv

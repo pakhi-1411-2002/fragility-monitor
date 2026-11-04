@@ -1,0 +1,21 @@
+ticker,name,issuer,asset_class,region,currency,proxy,first_date,holdings_as_of
+VWRL.L,Vanguard FTSE All-World,Vanguard,equity,Global,GBP,,2012-05-22,2026-09-30
+SWDA.L,iShares Core MSCI World,iShares,equity,Developed,GBp,,2009-09-25,2026-10-29
+VEVE.L,Vanguard FTSE Developed World,Vanguard,equity,Developed,GBP,,2014-09-30,2026-09-30
+HMWO.L,HSBC MSCI World,HSBC,equity,Developed,GBp,,2010-12-09,2026-10-23
+VUSA.L,Vanguard S&P 500 (Dist),Vanguard,equity,US,GBP,,2012-05-22,2026-09-30
+CSPX.L,iShares Core S&P 500,iShares,equity,US,USD,,2010-09-15,2026-10-29
+VUAG.L,Vanguard S&P 500 (Acc),Vanguard,equity,US,GBP,VUSA.L,2019-05-14,2026-09-30
+EQQQ.L,Invesco EQQQ Nasdaq-100,Invesco,equity,US,GBp,,2009-01-02,2026-10-29
+IITU.L,iShares S&P 500 IT Sector,iShares,equity,US,GBp,,2015-11-20,2026-10-29
+INRG.L,iShares Global Clean Energy,iShares,equity,Global,GBp,,2009-01-02,2026-10-29
+ISF.L,iShares Core FTSE 100,iShares,equity,UK,GBp,,2009-01-02,2026-10-29
+VUKE.L,Vanguard FTSE 100,Vanguard,equity,UK,GBP,,2012-05-22,2026-09-30
+VMID.L,Vanguard FTSE 250,Vanguard,equity,UK,GBP,,2014-09-30,2026-09-30
+VERX.L,Vanguard FTSE Dev Europe ex UK,Vanguard,equity,Europe,GBP,,2014-09-30,2026-09-30
+VJPN.L,Vanguard FTSE Japan,Vanguard,equity,Japan,GBP,,2013-05-21,2026-09-30
+EIMI.L,iShares Core MSCI EM IMI,iShares,equity,Emerging,USD,,2014-05-30,2026-10-29
+VFEM.L,Vanguard FTSE Emerging Markets,Vanguard,equity,Emerging,GBP,,2012-05-22,2026-09-30
+IGLT.L,iShares Core UK Gilts,iShares,bond,UK,GBP,,2008-01-02,
+VAGP.L,Vanguard Global Aggregate Bond GBP Hedged,Vanguard,bond,Global,GBP,IGLT.L,2019-06-18,
+SGLN.L,iShares Physical Gold,iShares,commodity,Global,GBp,,2011-04-08,

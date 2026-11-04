@@ -1,0 +1,6 @@
+name,start_date,end_date,reference,kind,description
+Covid crash,2020-02-19,2020-03-23,VWRL.L,market,Fast global sell-off as Covid lockdowns began
+2022 rate shock,2021-12-09,2022-06-16,VWRL.L,market,"Interest rates rose fast; shares and bonds fell together, tech hit hardest"
+Q4 2018 sell-off,2018-09-03,2018-12-24,VWRL.L,market,US-led share sell-off on rate and trade-war fears
+UK mini-budget,2022-09-22,2022-10-14,IGLT.L,event,UK gilt crash after the September 2022 mini-budget
+Brexit vote,2016-06-23,2016-06-27,VWRL.L,event,Pound fell sharply after the EU referendum result

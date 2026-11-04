@@ -1,0 +1,18 @@
+ticker,issuer,file,as_of,source_url,notes
+VWRL.L,Vanguard,VWRL_2026-09-30.xlsx,2026-09-30,,
+SWDA.L,iShares,SWDA_2026-10-29.xls,2026-10-29,,
+VEVE.L,Vanguard,VEVE_2026-09-30.xlsx,2026-09-30,,
+HMWO.L,HSBC,HMWO_2026-10-23.xls,2026-10-23,,
+VUSA.L,Vanguard,VUSA_2026-09-30.xlsx,2026-09-30,,
+CSPX.L,iShares,CSPX_2026-10-29.xls,2026-10-29,,
+VUAG.L,Vanguard,VUSA_2026-09-30.xlsx,2026-09-30,,same fund as VUSA.L: uses its file
+EQQQ.L,Invesco,EQQQ_2026-10-29.xlsx,2026-10-29,,
+IITU.L,iShares,IITU_2026-10-29.xls,2026-10-29,,
+INRG.L,iShares,INRG_2026-10-29.xls,2026-10-29,,
+ISF.L,iShares,ISF_2026-10-29.xls,2026-10-29,,
+VUKE.L,Vanguard,VUKE_2026-09-30.xlsx,2026-09-30,,
+VMID.L,Vanguard,VMID_2026-09-30.xlsx,2026-09-30,,
+VERX.L,Vanguard,VERX_2026-09-30.xlsx,2026-09-30,,
+VJPN.L,Vanguard,VJPN_2026-09-30.xlsx,2026-09-30,,
+EIMI.L,iShares,EIMI_2026-10-29.xls,2026-10-29,,
+VFEM.L,Vanguard,VFEM_2026-09-30.xlsx,2026-09-30,,
