@@ -19,6 +19,7 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 
+from fragility.alerts import build_alerts
 from fragility.concentration import ConcentrationResult, concentration_summary
 from fragility.config import MARKET_TICKER, PRICE_CACHE_MAX_AGE_DAYS
 from fragility.correlation import CorrelationResult, correlation_summary
@@ -71,7 +72,7 @@ class Report:
 
     # Verdict
     score: ScoreResult | None = None
-    alerts: list = field(default_factory=list)      # filled by alerts.py (Day 8)
+    alerts: list = field(default_factory=list)      # alerts.Alert, most serious first
 
     # Housekeeping
     holdings_as_of: str = ""
@@ -183,7 +184,7 @@ def run_analysis(portfolio: pd.DataFrame, *,
     warnings += _collect_warnings(companies, correlation, results)
     last_price = prices.dropna(how="all").index.max() if not prices.empty else None
 
-    return Report(
+    report = Report(
         portfolio=portfolio, total_value=total, warnings=warnings,
         companies=companies, sectors=sectors, countries=countries, overlap=overlap,
         concentration=concentration, correlation=correlation,
@@ -191,8 +192,10 @@ def run_analysis(portfolio: pd.DataFrame, *,
         hypotheticals=hypotheticals, score=score,
         holdings_as_of=_holdings_as_of(portfolio, universe),
         prices_as_of=last_price.date().isoformat() if last_price is not None else "",
-        seconds=time.perf_counter() - started,
     )
+    report.alerts = build_alerts(report)
+    report.seconds = time.perf_counter() - started
+    return report
 
 
 def analyse_csv(source, **kwargs) -> Report:
