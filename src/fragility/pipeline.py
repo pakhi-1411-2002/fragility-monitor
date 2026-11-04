@@ -27,6 +27,7 @@ from fragility.lookthrough import (
     BLOCK,
     company_exposure,
     country_exposure,
+    explode,
     overlap_matrix,
     sector_exposure,
 )
@@ -58,6 +59,7 @@ class Report:
 
     # Look-through
     companies: pd.DataFrame = field(default_factory=pd.DataFrame, repr=False)
+    lines: pd.DataFrame = field(default_factory=pd.DataFrame, repr=False)  # per route
     sectors: pd.DataFrame = field(default_factory=pd.DataFrame, repr=False)
     countries: pd.DataFrame = field(default_factory=pd.DataFrame, repr=False)
     overlap: pd.DataFrame = field(default_factory=pd.DataFrame, repr=False)
@@ -154,6 +156,7 @@ def run_analysis(portfolio: pd.DataFrame, *,
 
     # 1. Look-through
     companies = company_exposure(portfolio, holdings, universe)
+    lines = explode(portfolio, holdings, universe)      # which fund each piece comes via
     sectors = sector_exposure(portfolio, holdings, universe)
     countries = country_exposure(portfolio, holdings, universe)
     funds = portfolio.loc[portfolio["type"] == "etf", "ticker"].tolist()
@@ -186,7 +189,7 @@ def run_analysis(portfolio: pd.DataFrame, *,
 
     report = Report(
         portfolio=portfolio, total_value=total, warnings=warnings,
-        companies=companies, sectors=sectors, countries=countries, overlap=overlap,
+        companies=companies, lines=lines, sectors=sectors, countries=countries, overlap=overlap,
         concentration=concentration, correlation=correlation,
         scenarios=results, scenario_table=scenario_table(results), worst=worst,
         hypotheticals=hypotheticals, score=score,

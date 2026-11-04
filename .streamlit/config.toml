@@ -1,0 +1,13 @@
+# Streamlit settings for this project.
+# Committed to Git, so the deployed app (Streamlit Community Cloud) uses them too.
+
+[client]
+# What a visitor sees if something unexpected breaks:
+#   "full"  = Streamlit's red box with the Python traceback (handy while building)
+#   "none"  = a short generic message, no code shown (right for the public app)
+# The full error is always printed in the terminal / app logs either way.
+showErrorDetails = "none"
+
+[theme]
+base = "light"
+primaryColor = "#4c78a8"
