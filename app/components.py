@@ -270,3 +270,61 @@ def overlap_heatmap(matrix: pd.DataFrame) -> go.Figure:
                       paper_bgcolor="rgba(0,0,0,0)",
                       plot_bgcolor="rgba(0,0,0,0)")
     return fig
+
+
+# ---------------------------------------------------------------------------
+# Tab: Moves together (plan 9.1 item 5)
+# ---------------------------------------------------------------------------
+def corr_heatmap(corr: pd.DataFrame, order: list) -> go.Figure:
+    """How closely each pair of holdings moved: -1 opposite, 0 unrelated, +1 in step.
+
+    `order` puts holdings that belong to the same group next to each other,
+    so groups show up as warm blocks along the diagonal.
+    """
+    tickers = [t for t in order if t in corr.index]
+    c = corr.reindex(index=tickers, columns=tickers)
+    values = c.to_numpy(dtype=float, copy=True)
+    text = [["" if i == j or v != v else f"{v:.2f}" for j, v in enumerate(row)]
+            for i, row in enumerate(values)]
+    for i in range(len(tickers)):
+        values[i][i] = float("nan")                        # a holding vs itself: blank
+    fig = go.Figure(go.Heatmap(
+        z=values, x=tickers, y=tickers, text=text, texttemplate="%{text}",
+        zmin=-1, zmax=1,
+        colorscale=[[0, "#4c78a8"], [0.5, "#f4f5f7"], [1, "#d64541"]],
+        hovertemplate="%{y} and %{x}: %{z:.2f}<extra></extra>",
+        colorbar={"title": "moves<br>together", "tickvals": [-1, 0, 1],
+                  "ticktext": ["opposite", "unrelated", "in step"]},
+    ))
+    fig.update_layout(height=120 + 55 * len(tickers),
+                      margin={"t": 10, "b": 10, "l": 10, "r": 10},
+                      xaxis={"showgrid": False},
+                      yaxis={"autorange": "reversed", "showgrid": False},
+                      paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+    return fig
+
+
+# ---------------------------------------------------------------------------
+# Tab: Crash replay (plan 9.1 item 5)
+# ---------------------------------------------------------------------------
+def crash_path_chart(result, total: float) -> go.Figure:
+    """Value of today's portfolio, day by day, held through one past crash."""
+    value = result.path * total
+    low_day = value.idxmin()
+    fig = go.Figure()
+    fig.add_scatter(x=value.index, y=value, mode="lines", line={"color": "#4c78a8",
+                                                                 "width": 2.5},
+                    hovertemplate="%{x|%d %b %Y}: £%{y:,.0f}<extra></extra>",
+                    showlegend=False)
+    fig.add_hline(y=total, line={"dash": "dot", "color": GREY},
+                  annotation_text=f"start: {gbp(total)}", annotation_position="top left")
+    fig.add_scatter(x=[low_day], y=[value[low_day]], mode="markers+text",
+                    marker={"color": "#d64541", "size": 10},
+                    text=[f"lowest: {gbp(value[low_day])}"], textposition="bottom center",
+                    hoverinfo="skip", showlegend=False)
+    fig.update_layout(height=340, margin={"t": 20, "b": 10, "l": 10, "r": 10},
+                      yaxis={"tickprefix": "£", "tickformat": ",.0f",
+                             "gridcolor": "rgba(138,143,152,0.2)"},
+                      xaxis={"showgrid": False},
+                      paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+    return fig

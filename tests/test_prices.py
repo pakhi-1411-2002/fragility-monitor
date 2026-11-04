@@ -139,3 +139,30 @@ def test_refresh_downloads_everything_again(offline):
     prices.load_prices(["AAA.L"], start="2024-01-01")
     prices.load_prices(["AAA.L"], start="2024-01-01", refresh=True)
     assert len(offline) == 2
+
+
+# --- one-day spikes ------------------------------------------------------------
+def test_one_day_spike_that_reverses_is_removed():
+    # The real HMWO.L case from 24 Oct 2025: 32.70 -> 43.92 -> 33.23
+    s = series([32.53, 32.70, 43.92, 33.23, 33.50])
+    cleaned, removed = prices.remove_spikes(s)
+    assert removed == [DAYS[2]] and np.isnan(cleaned.iloc[2])
+    assert cleaned.drop(DAYS[2]).equals(s.drop(DAYS[2]))
+
+
+def test_spike_down_is_removed_too():
+    cleaned, removed = prices.remove_spikes(series([100, 101, 60, 100, 102]))
+    assert removed == [DAYS[2]]
+
+
+def test_real_crash_is_kept():
+    # A big fall that STAYS down is a real move, not a glitch.
+    s = series([100, 100, 75, 74, 76])
+    assert prices.remove_spikes(s)[1] == []
+
+
+def test_spike_is_filled_from_the_day_before_after_cleaning():
+    p = pd.DataFrame({"A": [32.53, 32.70, 43.92, 33.23, 33.50, 33.6, 33.7, 33.8, 33.9, 34.0],
+                      "T": TRADING}, index=DAYS, dtype=float)
+    clean, _ = prices.clean_prices(p)
+    assert clean["A"].iloc[2] == 32.70

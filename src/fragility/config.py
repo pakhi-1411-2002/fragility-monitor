@@ -41,7 +41,8 @@ MAX_MISSING_SHARE = 0.10            # drop a ticker if >10% of days missing
 # ---------------------------------------------------------------------------
 # Holdings and look-through (Sections 5.2 and 6.1)
 # ---------------------------------------------------------------------------
-TOP_N_HOLDINGS = 50                 # keep top 50 per ETF, rest -> residual
+TOP_N_HOLDINGS = 500
+SHARE_PRICE_TOP_N = 50                 # keep top 50 per ETF, rest -> residual
 RESIDUAL_LABEL = "Other (residual)"
 WEIGHT_SUM_TOLERANCE = 0.005        # ETF weights must sum to 1 +/- this
 

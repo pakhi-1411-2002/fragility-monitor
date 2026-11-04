@@ -2,8 +2,8 @@
 
 Pulls:
   1. every ETF in etf_universe.csv,
-  2. US and UK companies inside the funds' top holdings (shares people
-     often own directly, e.g. AAPL, HSBA.L),
+  2. US and UK companies among each fund's top SHARE_PRICE_TOP_N holdings
+     (shares people often own directly, e.g. AAPL, HSBA.L),
   3. any individual shares in the demo portfolios (data/demo/*.csv).
 
 Run from the repo root:
@@ -19,7 +19,7 @@ import sys
 
 import pandas as pd
 
-from fragility.config import DEMO_DIR, PRICE_CACHE, START_DATE
+from fragility.config import DEMO_DIR, PRICE_CACHE, SHARE_PRICE_TOP_N, START_DATE
 from fragility.prices import load_prices
 from fragility.universe import load_holdings, load_universe, share_symbols
 
@@ -60,7 +60,7 @@ def main() -> int:
 
     shares = []
     if not args.etfs_only:
-        symbols = share_symbols(load_holdings())
+        symbols = share_symbols(load_holdings(), max_rank=SHARE_PRICE_TOP_N)
         supported = symbols[symbols["yahoo_symbol"] != ""]
         shares = sorted(set(supported["yahoo_symbol"]) | set(demo_share_tickers(set(etfs))))
         print(f"Companies in fund holdings: {len(symbols)} "

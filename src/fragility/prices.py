@@ -153,18 +153,54 @@ def fx_ticker(currency: str) -> str:
 # ---------------------------------------------------------------------------
 # 3. Cleaning
 # ---------------------------------------------------------------------------
+SPIKE_JUMP = 0.20       # a one-day move bigger than this is suspicious...
+SPIKE_RETURN = 0.05     # ...if the next day is back within 5% of the day before
+
+
+def remove_spikes(series: pd.Series) -> tuple:
+    """Blank out one-day price spikes that undo themselves the next day.
+
+    Like a till typo that's corrected straight away: the price leaps (or
+    drops) by more than 20% and the very next day is back where it was.
+    Real markets don't do that; data glitches do (e.g. Yahoo recording a
+    London fund's dollar price for one day, a x1.34 jump). The blanked day is
+    filled with the previous price later, like any other gap.
+    Returns (cleaned series, list of dates removed).
+    """
+    s = series.copy()
+    known = s.dropna()
+    removed = []
+    values = known.to_numpy()
+    for i in range(1, len(values) - 1):
+        before, day, after = values[i - 1], values[i], values[i + 1]
+        if before <= 0:
+            continue
+        jumped = abs(day / before - 1) > SPIKE_JUMP
+        came_back = abs(after / before - 1) <= SPIKE_RETURN
+        if jumped and came_back:
+            removed.append(known.index[i])
+    if removed:
+        s.loc[removed] = float("nan")
+    return s, removed
+
+
 def clean_prices(prices: pd.DataFrame) -> tuple:
     """Fill short gaps, drop broken tickers. Returns (clean prices, list of dropped tickers).
 
     - UK and US markets close on different holidays, so one market has a gap
       while the other trades. Short gaps (up to FFILL_LIMIT_DAYS) are filled
       with the last known price.
+    - One-day spikes that reverse the next day are removed (remove_spikes).
     - A ticker missing more than MAX_MISSING_SHARE of its days (counted from
       its first price, so newer funds aren't punished) is dropped.
     """
     p = prices.sort_index()
     p = p[~p.index.duplicated(keep="last")]
     p = p.where(p > 0)                      # zero or negative prices are errors
+    for ticker in p.columns:                # one-day glitches that undo themselves
+        p[ticker], removed = remove_spikes(p[ticker])
+        for day in removed:
+            log.warning("Removed a one-day price spike for %s on %s", ticker, day.date())
     p = p.dropna(how="all")
     p = p.ffill(limit=FFILL_LIMIT_DAYS)
 

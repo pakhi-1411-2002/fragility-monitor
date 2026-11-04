@@ -63,7 +63,12 @@ def why_similar(id_a: str, id_b: str, a, b) -> tuple:
     if len(short) >= MIN_PREFIX_LENGTH and long_.startswith(short):
         return "one name starts with the other", 0.95
 
-    score = SequenceMatcher(None, sa, sb).ratio()
+    matcher = SequenceMatcher(None, sa, sb)
+    # Cheap upper bounds first: most pairs are obviously different and stop here.
+    if (matcher.real_quick_ratio() < SIMILARITY_CUTOFF
+            or matcher.quick_ratio() < SIMILARITY_CUTOFF):
+        return None, 0
+    score = matcher.ratio()
     if score >= SIMILARITY_CUTOFF:
         return "very similar spelling", round(score, 2)
     return None, 0
@@ -73,7 +78,7 @@ def load_rejected() -> set:
     if not REJECTED_CSV.exists():
         return set()
     df = pd.read_csv(REJECTED_CSV, dtype=str).fillna("")
-    return {frozenset(p) for p in zip(df["name_key"], df["holding_id"])}
+    return {frozenset(p) for p in zip(df["name_key"], df["holding_id"], strict=True)}
 
 
 def suggest() -> None:
@@ -81,8 +86,12 @@ def suggest() -> None:
     rejected = load_rejected()
     rows = []
 
+    # Plain dict lookups: much faster than table.loc[...] inside a loop over
+    # millions of pairs (500 holdings per fund gives a few thousand companies).
+    info = {hid: row for hid, row in zip(table.index, table.itertuples(index=False),
+                                         strict=True)}
     for id_a, id_b in combinations(table.index, 2):
-        a, b = table.loc[id_a], table.loc[id_b]
+        a, b = info[id_a], info[id_b]
 
         # Each issuer spells names consistently: two ids seen at exactly the
         # same issuers are two different companies, not two spellings.
@@ -95,7 +104,7 @@ def suggest() -> None:
 
         # Keep the id that carries more money; rename the other to it.
         keep, rename = (id_a, id_b) if a.total_weight >= b.total_weight else (id_b, id_a)
-        kept, renamed = table.loc[keep], table.loc[rename]
+        kept, renamed = info[keep], info[rename]
 
         warnings = []
         if kept.country != renamed.country:
@@ -107,8 +116,8 @@ def suggest() -> None:
             "accept": "",
             "name_key": rename,
             "holding_id": keep,
-            "display_name": kept["name"],
-            "renamed_from": renamed["name"],
+            "display_name": kept.name,
+            "renamed_from": renamed.name,
             "reason": reason,
             "score": score,
             "check": "; ".join(warnings) or "looks safe",

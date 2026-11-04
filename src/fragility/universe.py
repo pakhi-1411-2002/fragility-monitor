@@ -16,7 +16,8 @@ RESIDUAL_ID = "RESIDUAL"
 
 def load_universe(path=ETF_UNIVERSE_CSV) -> pd.DataFrame:
     """The list of supported ETFs (one row per fund)."""
-    return pd.read_csv(path, dtype=str).fillna("")
+    universe = pd.read_csv(path, dtype=str).fillna("")
+    return universe.apply(lambda col: col.str.strip())   # remove stray spaces
 
 
 def load_holdings(path=ETF_HOLDINGS_CSV) -> pd.DataFrame:
@@ -120,15 +121,22 @@ def yahoo_symbol(ticker: str, country: str) -> str:
     return ""
 
 
-def share_symbols(holdings: pd.DataFrame) -> pd.DataFrame:
+def share_symbols(holdings: pd.DataFrame, max_rank: int | None = None) -> pd.DataFrame:
     """Companies inside the funds that someone could also own directly, with Yahoo symbols.
 
     Residual rows and bond/gold single-block rows are skipped. Returns one row
     per company: holding_id, holding_name, holding_ticker, country, yahoo_symbol
     (blank when the company's market isn't supported).
+
+    max_rank: only keep companies that are among the `max_rank` biggest holdings
+    of at least one fund (used to keep the price download small).
     """
     companies = holdings[(holdings["holding_id"] != RESIDUAL_ID)
                          & (holdings["holding_id"] != holdings["etf_ticker"])]
+    if max_rank is not None:
+        rank = companies.groupby("etf_ticker")["weight"].rank(method="first",
+                                                              ascending=False)
+        companies = companies[rank <= max_rank]
     companies = companies.drop_duplicates("holding_id")[
         ["holding_id", "holding_name", "holding_ticker", "country"]].copy()
     companies["yahoo_symbol"] = [yahoo_symbol(t, c) for t, c in
