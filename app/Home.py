@@ -16,17 +16,25 @@ Rule: this file only draws. Every number comes from fragility.pipeline.
 
 import logging
 import re
+import sys
+from pathlib import Path
 
-import components as ui
-import pandas as pd
-import streamlit as st
+# Make the fragility package importable without installing it (Streamlit Cloud
+# just clones the repo). Locally, `pip install -e .` already does this.
+SRC = Path(__file__).resolve().parents[1] / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
-import data
-from fragility.alerts import split_alerts
-from fragility.config import DEMO_DIR, DISCLAIMER, SCORE_COMPONENTS, TOP_N_HOLDINGS
-from fragility.lookthrough import COMPANY, MIXED_COUNTRIES, UNCLASSIFIED
-from fragility.portfolio import TEMPLATE_CSV
-from fragility.score import LABELS, METRICS
+import components as ui  # noqa: E402
+import pandas as pd  # noqa: E402
+import streamlit as st  # noqa: E402
+
+import data  # noqa: E402
+from fragility.alerts import split_alerts  # noqa: E402
+from fragility.config import DEMO_DIR, DISCLAIMER, SCORE_COMPONENTS, TOP_N_HOLDINGS  # noqa: E402
+from fragility.lookthrough import COMPANY, MIXED_COUNTRIES, UNCLASSIFIED  # noqa: E402
+from fragility.portfolio import TEMPLATE_CSV  # noqa: E402
+from fragility.score import LABELS, METRICS  # noqa: E402
 
 METHOD_TEXT = """
 **What this tool does, in plain words**

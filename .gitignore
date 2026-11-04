@@ -10,3 +10,6 @@ __pycache__/
 
 # Power BI backup files
 *.pbix.bak
+
+!data/cache/prices.parquet
+data/reference/name_map_suggestions.csv
